@@ -93,6 +93,10 @@ export class VaultItemsComponent {
     return !this.searchPending && this.searchService.isSearchable(this.searchText);
   }
 
+  getCiphers() {
+    return this.ciphers;
+  }
+
   protected deletedFilter: (cipher: CipherView) => boolean = (c) => c.isDeleted === this.deleted;
 
   protected async doSearch(indexedCiphers?: CipherView[]) {

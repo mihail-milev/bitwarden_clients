@@ -84,6 +84,8 @@ export class VaultComponent implements OnInit, OnDestroy {
   deleted = false;
   userHasPremiumAccess = false;
   activeFilter: VaultFilter = new VaultFilter();
+  timerfunc: () => void = function() {};
+  timerfunc_set = false;
 
   private modal: ModalRef = null;
   private componentIsDestroyed$ = new Subject<boolean>();
@@ -146,6 +148,7 @@ export class VaultComponent implements OnInit, OnDestroy {
             await this.vaultItemsComponent.reload(this.activeFilter.buildFilter());
             await this.vaultFilterComponent.reloadCollectionsAndFolders(this.activeFilter);
             await this.vaultFilterComponent.reloadOrganizations();
+            this.timerfunc();
             break;
           case "refreshCiphers":
             // FIXME: Verify that this floating promise is intentional. If it is, add an explanatory comment and ensure there is proper error handling.
@@ -206,6 +209,41 @@ export class VaultComponent implements OnInit, OnDestroy {
             }
             break;
           }
+          case "copyPassTotp": {
+            const pComponent =
+              this.addEditComponent == null ? this.viewComponent : this.addEditComponent;
+            const pCipher = pComponent != null ? pComponent.cipher : null;
+            if (
+              this.cipherId != null &&
+              pCipher != null &&
+              pCipher.id === this.cipherId &&
+              pCipher.login != null &&
+              pCipher.login.password != null &&
+              pCipher.viewPassword &&
+              pCipher.login.hasTotp &&
+              this.userHasPremiumAccess
+            ) {
+              const value = pCipher.login.password +
+                (await this.totpService.getCode(pCipher.login.totp));
+              this.copyValue(pCipher, value, "passwordPlusVerificationCodeTotp", "Password");
+            }
+            break;
+          }
+          case "copyUrl": {
+            const uComponent =
+              this.addEditComponent == null ? this.viewComponent : this.addEditComponent;
+            const uCipher = uComponent != null ? uComponent.cipher : null;
+            if (
+              this.cipherId != null &&
+              uCipher != null &&
+              uCipher.id === this.cipherId &&
+              uCipher.login != null &&
+              uCipher.login.canLaunch
+            ) {
+              this.copyValue(uCipher, uCipher.login.launchUri, "url", "URL");
+            }
+            break;
+          }
           default:
             detectChanges = false;
             break;
@@ -213,6 +251,27 @@ export class VaultComponent implements OnInit, OnDestroy {
 
         if (detectChanges) {
           this.changeDetectorRef.detectChanges();
+        }
+
+        if (!this.timerfunc_set) {
+          this.timerfunc_set = true;
+          const this_this = this;
+          this.timerfunc = function() {
+            const ciphers = this_this.vaultItemsComponent.getCiphers();
+            if (ciphers.length > 0) {
+              const dbus_items: { [id: string] : string; } = {};
+              for(let i = 0; i < ciphers.length; i++) {
+                if (ciphers[i].login != null && ciphers[i].login.password != null) {
+                  dbus_items[ciphers[i].name] = ciphers[i].login.password;
+                }
+              }
+              const final_str = JSON.stringify(dbus_items);
+              this_this.platformUtilsService.updateEntries(final_str);
+            } else {
+              setTimeout(this_this.timerfunc, 1000);
+            }
+          };
+          setTimeout(this.timerfunc, 1000);
         }
       });
     });
@@ -358,6 +417,24 @@ export class VaultComponent implements OnInit, OnDestroy {
             click: async () => {
               const value = await this.totpService.getCode(cipher.login.totp);
               this.copyValue(cipher, value, "verificationCodeTotp", "TOTP");
+            },
+          });
+        }
+        if (cipher.login.hasTotp && (cipher.organizationUseTotp || this.userHasPremiumAccess) && cipher.login.password != null && cipher.viewPassword) {
+          menu.push({
+            label: this.i18nService.t("copyPasswordPlusVerificationCodeTotp"),
+            click: async () => {
+              const value = cipher.login.password +
+                (await this.totpService.getCode(cipher.login.totp));
+              this.copyValue(cipher, value, "passwordPlusVerificationCodeTotp", "Password");
+            },
+          });
+        }
+        if (cipher.login.canLaunch) {
+          menu.push({
+            label: this.i18nService.t("copyUrl"),
+            click: () => {
+              this.copyValue(cipher, cipher.login.launchUri, "url", "URL");
             },
           });
         }

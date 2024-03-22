@@ -6,6 +6,7 @@ mod clipboard;
 mod crypto;
 mod error;
 mod password;
+mod dbus;
 
 #[napi]
 pub mod passwords {
@@ -120,5 +121,19 @@ pub mod clipboards {
     pub async fn write(text: String, password: bool) -> napi::Result<()> {
         super::clipboard::write(&text, password)
             .map_err(|e| napi::Error::from_reason(e.to_string()))
+    }
+}
+
+#[napi]
+pub mod dbus_system {
+    #[napi]
+    pub async fn start_dbus() -> napi::Result<()> {
+        super::dbus::start_dbus();
+        Ok(())
+    }
+    #[napi]
+    pub async fn update_entries(items: String) -> napi::Result<()> {
+        super::dbus::update_entries(items);
+        Ok(())
     }
 }

@@ -44,6 +44,8 @@ import { ElectronStorageService } from "./platform/services/electron-storage.ser
 import { I18nMainService } from "./platform/services/i18n.main.service";
 import { ElectronMainMessagingService } from "./services/electron-main-messaging.service";
 
+import { dbus_system } from "@bitwarden/desktop-native";
+
 export class Main {
   logService: ElectronLogMainService;
   i18nService: I18nMainService;
@@ -278,6 +280,8 @@ export class Main {
         } else {
           app.setAsDefaultProtocolClient("bitwarden");
         }
+
+        await dbus_system.startDbus();
 
         // Process protocol for macOS
         app.on("open-url", (event, url) => {

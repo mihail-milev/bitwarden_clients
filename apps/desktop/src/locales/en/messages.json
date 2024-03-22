@@ -400,6 +400,12 @@
   "copyVerificationCodeTotp": {
     "message": "Copy verification code (TOTP)"
   },
+  "copyPasswordPlusVerificationCodeTotp": {
+    "message": "Copy password + TOTP"
+  },
+  "copyUrl": {
+    "message": "Copy URL"
+  },
   "length": {
     "message": "Length"
   },

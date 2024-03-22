@@ -24,6 +24,7 @@ export abstract class PlatformUtilsService {
   isMacAppStore: () => boolean;
   isViewOpen: () => Promise<boolean>;
   launchUri: (uri: string, options?: any) => void;
+  updateEntries: (itms: string) => void;
   getApplicationVersion: () => Promise<string>;
   getApplicationVersionNumber: () => Promise<string>;
   supportsWebAuthn: (win: Window) => boolean;

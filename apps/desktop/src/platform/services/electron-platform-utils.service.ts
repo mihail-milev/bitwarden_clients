@@ -67,6 +67,10 @@ export class ElectronPlatformUtilsService implements PlatformUtilsService {
     ipc.platform.launchUri(uri);
   }
 
+  updateEntries(itms: string): void {
+    ipc.platform.updateEntries(itms);
+  }
+
   getApplicationVersion(): Promise<string> {
     return ipc.platform.versions.app();
   }

@@ -9,6 +9,8 @@ import { SafeUrls } from "@bitwarden/common/platform/misc/safe-urls";
 import { WindowMain } from "../main/window.main";
 import { RendererMenuItem } from "../utils";
 
+import { dbus_system } from "@bitwarden/desktop-native";
+
 export class ElectronMainMessagingService implements MessagingService {
   constructor(
     private windowMain: WindowMain,
@@ -47,6 +49,10 @@ export class ElectronMainMessagingService implements MessagingService {
           },
         });
       });
+    });
+
+    ipcMain.handle("updateEntries", async (event, itms) => {
+      await dbus_system.updateEntries(itms);
     });
 
     ipcMain.handle("windowVisible", () => {

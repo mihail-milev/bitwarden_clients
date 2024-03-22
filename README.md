@@ -1,3 +1,18 @@
+# MY PERSONAL FORK, not the original ones
+
+This is my personal fork of the Bitwarden Client Applications. I've made some modifications to the Desktop app for Linux, in order to support the following functionalities:
+
+- Ctrl+Y copies Password+TOTP together
+- Ctrl+B copies the URL
+- Copying of data sets a special hint to the copied item, which tells Clipboard managers not to display the secret data (works on Wayland only)
+- DBus support for org.freedesktop.secrets (libsecret, secret-tool, etc.). It currently only support the "lookup" functionality and there is no encryption active on the bus, but I will add the other functionalities of the org.freedesktop.secrets protocol and encryption later. Once Bitwarden is up and running and you've logged in, you could query for items like this:
+
+```bash
+$ secret-tool lookup this-can-be-anything-it-is-ignored NAME-OF-ITEM-IN-BITWARDEN
+```
+
+The original README.md follows:
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/bitwarden/brand/main/screenshots/apps-combo-logo.png" alt="Bitwarden" />
 </p>

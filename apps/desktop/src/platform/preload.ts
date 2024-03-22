@@ -126,6 +126,7 @@ export default {
   },
 
   launchUri: (uri: string) => ipcRenderer.invoke("launchUri", uri),
+  updateEntries: (itms: string) => ipcRenderer.invoke("updateEntries", itms),
 
   storage,
   passwords,

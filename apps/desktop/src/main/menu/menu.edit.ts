@@ -26,6 +26,8 @@ export class EditMenu implements IMenubarMenu {
       this.copyUsername,
       this.copyPassword,
       this.copyVerificationCodeTotp,
+      this.copyPasswordPlusVerificationCodeTotp,
+      this.copyUrl
     ];
   }
 
@@ -117,6 +119,26 @@ export class EditMenu implements IMenubarMenu {
       id: "copyTotp",
       click: () => this.sendMessage("copyTotp"),
       accelerator: "CmdOrCtrl+T",
+      enabled: !this._isLocked,
+    };
+  }
+
+  private get copyPasswordPlusVerificationCodeTotp(): MenuItemConstructorOptions {
+    return {
+      label: this.localize("copyPasswordPlusVerificationCodeTotp"),
+      id: "copyPassTotp",
+      click: () => this.sendMessage("copyPassTotp"),
+      accelerator: "CmdOrCtrl+Y",
+      enabled: !this._isLocked,
+    };
+  }
+
+  private get copyUrl(): MenuItemConstructorOptions {
+    return {
+      label: this.localize("copyUrl"),
+      id: "copyUrl",
+      click: () => this.sendMessage("copyUrl"),
+      accelerator: "CmdOrCtrl+B",
       enabled: !this._isLocked,
     };
   }

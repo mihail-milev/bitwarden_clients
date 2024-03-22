@@ -41,3 +41,7 @@ export namespace clipboards {
   export function read(): Promise<string>
   export function write(text: string, password: boolean): Promise<void>
 }
+export namespace dbus_system {
+  export function startDbus(): Promise<void>
+  export function updateEntries(items: string): Promise<void>
+}
